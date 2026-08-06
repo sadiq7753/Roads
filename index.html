@@ -18,19 +18,23 @@
   <main class="container">
     <section id="map-pane">
       <div id="map"></div>
-      <div class="map-hint">Click map to fill lat/lon in the form</div>
+      <div class="map-hint">Click map to fill the place input (reverse-geocode)</div>
     </section>
 
     <aside class="panel">
       <form id="stop-form">
         <h2>Add a stop</h2>
 
-        <label>Place name<input id="name" required placeholder="e.g. Yosemite Entrance" /></label>
+        <label>Place title<input id="name" required placeholder="e.g. Yosemite Entrance" /></label>
 
-        <div class="coords">
-          <label>Latitude<input id="lat" required pattern="^-?\d+(\.\d+)?$" placeholder="lat" /></label>
-          <label>Longitude<input id="lng" required pattern="^-?\d+(\.\d+)?$" placeholder="lng" /></label>
-        </div>
+        <label>Search place or city
+          <input id="place" placeholder="Type a city or place name (e.g. Yosemite, San Francisco)" autocomplete="off" />
+        </label>
+        <div id="search-results" class="search-results" hidden></div>
+
+        <!-- keep hidden lat/lng for submission -->
+        <input type="hidden" id="lat" />
+        <input type="hidden" id="lng" />
 
         <label>Date<input id="date" type="date" /></label>
         <label>Notes<textarea id="notes" rows="4" placeholder="What happened here..."></textarea></label>
@@ -59,7 +63,7 @@
   </main>
 
   <footer class="footer">
-    <small>Built with Leaflet + OSRM — free hosting: GitHub Pages, Netlify, Vercel, Cloudflare Pages</small>
+    <small>Built with Leaflet + OSRM + Nominatim — free hosting: GitHub Pages, Netlify, Vercel, Cloudflare Pages</small>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
