@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": "fredericksburg",
+    "name": "Fredericksburg",
+    "date": "2026-08-06",
+    "lat": 38.3001,
+    "lng": -77.4571,
+    "notes": "Home -  start of the journey",
+    "photos": []
+  },
+  {
+    "id": "bloomsburg",
+    "name": "Bloomsburg",
+    "date": "2026-08-07",
+    "lat": 41.0045,
+    "lng": -76.4537,
+    "notes": "First Stop",
+    "photos": []
+  },
+  {
+    "id": "niagara-falls",
+    "name": "Niagara Falls",
+    "date": "2026-08-08",
+    "lat": 43.0848,
+    "lng": -79.0702,
+    "notes": "Second camp site",
+    "photos": []
+  }
+]
