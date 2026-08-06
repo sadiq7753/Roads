@@ -4,66 +4,39 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Road Trip Journal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="topbar">
-    <h1>Road Trip Journal</h1>
-    <p class="subtitle">Document stops, notes and routes — stored as JSON | Host on GitHub Pages</p>
+    <div>
+      <h1>Road Trip Journal</h1>
+      <p class="subtitle">Capture your stops, photos and notes — see them on the map.</p>
+    </div>
   </header>
 
   <main class="container">
     <section id="map-pane">
       <div id="map"></div>
-      <div class="map-hint">Click map to fill the place input (reverse-geocode)</div>
+      <div class="map-hint">Click a marker for details. To add a stop use the private admin page.</div>
     </section>
 
     <aside class="panel">
-      <form id="stop-form">
-        <h2>Add a stop</h2>
-
-        <label>Place title<input id="name" required placeholder="e.g. Yosemite Entrance" /></label>
-
-        <label>Search place or city
-          <input id="place" placeholder="Type a city or place name (e.g. Yosemite, San Francisco)" autocomplete="off" />
-        </label>
-        <div id="search-results" class="search-results" hidden></div>
-
-        <!-- keep hidden lat/lng for submission -->
-        <input type="hidden" id="lat" />
-        <input type="hidden" id="lng" />
-
-        <label>Date<input id="date" type="date" /></label>
-        <label>Notes<textarea id="notes" rows="4" placeholder="What happened here..."></textarea></label>
-        <label>Image URL (optional)<input id="image" placeholder="https://..." /></label>
-
-        <div class="form-actions">
-          <button type="submit" class="primary">Add stop</button>
-          <button id="clear-all" type="button" class="danger">Clear all</button>
-        </div>
-      </form>
+      <section class="info">
+        <h3>Your trips</h3>
+        <p class="note">This public page shows your routes and stops. Stops contain date, notes and optional photos.</p>
+      </section>
 
       <section class="list-section">
         <h3>Stops</h3>
         <ul id="stops-list" class="stops-list"></ul>
       </section>
-
-      <section class="storage">
-        <h3>Storage</h3>
-        <div class="storage-buttons">
-          <button id="export-json">Export JSON</button>
-          <input id="import-file" type="file" accept=".json" />
-        </div>
-        <p class="note">This app saves stops to localStorage by default. To persist in your repo, commit the exported JSON as <code>stops.json</code> and update from GitHub when needed.</p>
-      </section>
     </aside>
   </main>
 
   <footer class="footer">
-    <small>Built with Leaflet + OSRM + Nominatim — free hosting: GitHub Pages, Netlify, Vercel, Cloudflare Pages</small>
+    <small>Public map — add new stops from a private admin page.</small>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

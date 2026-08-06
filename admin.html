@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Road Trip — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Add a stop (admin)</h1>
+    <p class="subtitle">Use this private page to add or edit stops. Keep this URL private or protect it behind a service (Netlify Identity, Cloudflare Access).</p>
+  </header>
+
+  <main class="container">
+    <section id="map-pane">
+      <div id="map"></div>
+      <div class="map-hint">Click map to pick a location (reverse-geocode) or type in the search box.</div>
+    </section>
+
+    <aside class="panel">
+      <form id="stop-form" autocomplete="off">
+        <h2>Add a stop</h2>
+
+        <label>Title
+          <input id="name" required placeholder="Short title (eg: Yosemite Entrance)" />
+        </label>
+
+        <label>Search place or city
+          <input id="place" placeholder="Type a city or place name" />
+        </label>
+        <div id="search-results" class="search-results" hidden></div>
+
+        <input type="hidden" id="lat" />
+        <input type="hidden" id="lng" />
+
+        <label>Date<input id="date" type="date" /></label>
+        <label>Notes<textarea id="notes" rows="4" placeholder="What happened here..."></textarea></label>
+        <label>Image URL (optional)<input id="image" placeholder="https://..." /></label>
+
+        <div class="form-actions">
+          <button type="submit" class="primary">Add stop</button>
+          <button id="clear-all" type="button" class="danger">Clear all</button>
+        </div>
+      </form>
+
+      <section class="storage">
+        <h3>Storage</h3>
+        <div class="storage-buttons">
+          <button id="export-json">Export JSON</button>
+          <input id="import-file" type="file" accept=".json" />
+        </div>
+        <p class="note">This admin saves locally by default. To write to GitHub securely, set up a serverless commit endpoint (instructions provided in the repo).</p>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <small>Admin — keep this URL private or protect it with identity/access control.</small>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="admin-script.js"></script>
+</body>
+</html>
