@@ -6,7 +6,7 @@
     "lat": 38.3001,
     "lng": -77.4571,
     "notes": "Home -  start of the journey",
-    "photos": [https://pixabay.com/images/download/ahmetyuksek-hallstatt-10390953_1920.jpg]
+    "photos": []
   },
   {
     "id": "bloomsburg",
@@ -18,12 +18,14 @@
     "photos": []
   },
   {
-    "id": "niagara-falls",
-    "name": "Niagara Falls",
+    "id": "niagara-county",
+    "name": "Niagara County",
     "date": "2026-08-08",
-    "lat": 43.0848,
-    "lng": -79.0702,
-    "notes": "Second camp site",
-    "photos": []
+    "lat": 43.2042,
+    "lng": -78.7676,
+    "notes": "",
+    "photos": [
+      "https://pixabay.com/images/download/ahmetyuksek-hallstatt-10390953_1920.jpg"
+    ]
   }
 ]
