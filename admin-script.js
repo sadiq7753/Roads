@@ -25,18 +25,45 @@ const exportBtn = document.getElementById('export-json');
 const importFile = document.getElementById('import-file');
 const clearAllBtn = document.getElementById('clear-all');
 
-function loadFromStorage(){
+function showToast(message, type = 'info', timeout = 3000){
+  let toast = document.getElementById('rt-toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'rt-toast';
+    toast.style.position = 'fixed';
+    toast.style.right = '20px';
+    toast.style.top = '20px';
+    toast.style.padding = '10px 14px';
+    toast.style.borderRadius = '8px';
+    toast.style.zIndex = 9999;
+    toast.style.color = '#021';
+    toast.style.fontWeight = '600';
+    toast.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
+    document.body.appendChild(toast);
+  }
+  toast.style.background = type === 'success' ? '#b7ffef' : (type === 'error' ? '#ffd6d6' : 'rgba(255,255,255,0.06)');
+  toast.textContent = message;
+  toast.style.display = 'block';
+  if(timeout){
+    setTimeout(()=>{ toast.style.display = 'none'; }, timeout);
+  }
+}
+
+async function loadFromStorage(){
   const raw = localStorage.getItem(STORAGE_KEY);
   if(raw){
     try { stops = JSON.parse(raw); } catch(e){ stops = [] }
   } else {
     // attempt to load stops.json if present at site root
-    fetch('stops.json').then(r => r.ok ? r.json() : []).then(j => { if(Array.isArray(j)) stops = j; });
+    try {
+      const r = await fetch('stops.json');
+      if(r.ok){ const j = await r.json(); if(Array.isArray(j)) stops = j; }
+    } catch(e){ /* ignore */ }
   }
   renderStopsOnMap();
 }
 
-function saveToStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(stops,null,2)); }
+function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(stops,null,2)); }catch(e){ console.error('Save failed', e); showToast('Saving failed', 'error'); } }
 
 // -- rendering
 function clearMapMarkers(){
@@ -144,36 +171,39 @@ map.on('click', async (e)=>{
 // submit
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
-  if(Number.isNaN(lat) || Number.isNaN(lng)){ alert('Please select a place from suggestions or click the map.'); return; }
-  const obj = {
-    name: nameInput.value.trim() || (placeInput.value || 'Stop'),
-    lat, lng,
-    date: dateInput.value || '',
-    notes: notesInput.value || '',
-    image: imageInput.value || ''
-  };
-  // save locally:
-  stops.push(obj);
-  saveToStorage();
-  renderStopsOnMap();
+  try{
+    const lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
+    if(Number.isNaN(lat) || Number.isNaN(lng)){ showToast('Please select a place from suggestions or click the map.', 'error'); return; }
+    const obj = {
+      name: nameInput.value.trim() || (placeInput.value || 'Stop'),
+      lat, lng,
+      date: dateInput.value || '',
+      notes: notesInput.value || '',
+      image: imageInput.value || ''
+    };
+    // save locally:
+    stops.push(obj);
+    saveToStorage();
+    renderStopsOnMap();
+    showToast('Stop added', 'success');
 
-  // OPTIONAL: send to serverless function to commit to GitHub (secure method)
-  // Uncomment and set your endpoint if you deploy a serverless function:
-  /*
-  try {
-    const r = await fetch('/.netlify/functions/commit-stop', {
-      method: 'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify(obj)
-    });
-    if(!r.ok) throw new Error('commit failed');
-    alert('Saved and committed to repo');
-  } catch(err){ console.warn(err); alert('Saved locally; server commit failed'); }
-  */
+    // OPTIONAL: send to serverless function to commit to GitHub (secure method)
+    // Uncomment and set your endpoint if you deploy a serverless function:
+    /*
+    try {
+      const r = await fetch('/.netlify/functions/commit-stop', {
+        method: 'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(obj)
+      });
+      if(!r.ok) throw new Error('commit failed');
+      showToast('Saved and committed to repo', 'success');
+    } catch(err){ console.warn(err); showToast('Saved locally; server commit failed', 'error'); }
+    */
 
-  form.reset();
-  searchResultsEl.hidden = true;
+    form.reset();
+    searchResultsEl.hidden = true;
+  }catch(err){ console.error(err); showToast('Failed to add stop', 'error'); }
 });
 
 // import/export & clear
@@ -189,8 +219,8 @@ importFile.addEventListener('change', (ev)=>{
   reader.onload = (e) => {
     try {
       const imported = JSON.parse(e.target.result);
-      if(Array.isArray(imported)){ stops = imported; saveToStorage(); renderStopsOnMap(); } else alert('JSON must be an array of stops');
-    } catch(e){ alert('Invalid JSON'); }
+      if(Array.isArray(imported)){ stops = imported; saveToStorage(); renderStopsOnMap(); showToast('Imported stops', 'success'); } else showToast('JSON must be an array of stops', 'error');
+    } catch(e){ showToast('Invalid JSON', 'error'); }
   };
   reader.readAsText(f);
   importFile.value = '';
@@ -198,7 +228,7 @@ importFile.addEventListener('change', (ev)=>{
 
 clearAllBtn.addEventListener('click', ()=>{
   if(!confirm('Clear all stops?')) return;
-  stops = []; saveToStorage(); renderStopsOnMap();
+  stops = []; saveToStorage(); renderStopsOnMap(); showToast('Cleared all stops', 'success');
 });
 
 // init
