@@ -4,62 +4,43 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Road Trip Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <h1>Road Trip Journal</h1>
-      <p class="subtitle">Capture your stops, photos and notes — see them on the map.</p>
-    </div>
+    <h1>Road Trip Journal</h1>
+    <p class="subtitle">Document stops, notes and routes — stored as JSON | Host on GitHub Pages</p>
   </header>
 
   <main class="container">
     <section id="map-pane">
       <div id="map"></div>
-      <div class="map-hint">Click a marker for details. To add a stop use the panel.</div>
+      <div class="map-hint">Click map to fill lat/lon in the form</div>
     </section>
 
     <aside class="panel">
-      <section class="info">
-        <h3>Add a stop</h3>
-        <p class="note">Type a place name and select a suggestion or click the map. Preview appears below. "Add permanently" will save to the repository (requires serverless commit function) or fall back to local storage.</p>
-      </section>
+      <form id="stop-form">
+        <h2>Add a stop</h2>
 
-      <form id="stop-form" autocomplete="off">
-        <label>Title
-          <input id="name" required placeholder="Short title (eg: Yosemite Entrance)" />
-        </label>
+        <label>Place name<input id="name" required placeholder="e.g. Yosemite Entrance" /></label>
 
-        <label>Search place or city
-          <input id="place" placeholder="Type a city or place name" />
-        </label>
-        <div id="search-results" class="search-results" hidden></div>
-
-        <input type="hidden" id="lat" />
-        <input type="hidden" id="lng" />
+        <div class="coords">
+          <label>Latitude<input id="lat" required pattern="^-?\d+(\.\d+)?$" placeholder="lat" /></label>
+          <label>Longitude<input id="lng" required pattern="^-?\d+(\.\d+)?$" placeholder="lng" /></label>
+        </div>
 
         <label>Date<input id="date" type="date" /></label>
-        <label>Notes<textarea id="notes" rows="3" placeholder="What happened here..."></textarea></label>
+        <label>Notes<textarea id="notes" rows="4" placeholder="What happened here..."></textarea></label>
         <label>Image URL (optional)<input id="image" placeholder="https://..." /></label>
 
         <div class="form-actions">
-          <button id="preview-btn" type="button" class="secondary">Preview</button>
-          <button id="add-permanent" type="button" class="primary" disabled>Add permanently</button>
+          <button type="submit" class="primary">Add stop</button>
+          <button id="clear-all" type="button" class="danger">Clear all</button>
         </div>
       </form>
-
-      <section class="preview-section" id="preview-section" hidden>
-        <h4>Preview</h4>
-        <div id="preview-card" class="preview-card">
-          <strong id="pv-name"></strong>
-          <div id="pv-date" class="muted"></div>
-          <img id="pv-image" src="" alt="" style="display:none" />
-          <p id="pv-notes"></p>
-        </div>
-      </section>
 
       <section class="list-section">
         <h3>Stops</h3>
@@ -72,13 +53,13 @@
           <button id="export-json">Export JSON</button>
           <input id="import-file" type="file" accept=".json" />
         </div>
-        <p class="note">This will attempt to write to stops.json in the repo. To enable that, deploy the provided Netlify function and set a GITHUB_TOKEN. If unavailable, changes are saved locally.</p>
+        <p class="note">This app saves stops to localStorage by default. To persist in your repo, commit the exported JSON as <code>stops.json</code> and update from GitHub when needed.</p>
       </section>
     </aside>
   </main>
 
   <footer class="footer">
-    <small>Public map — add new stops from this panel. Permanent saves require a server-side commit function.</small>
+    <small>Built with Leaflet + OSRM — free hosting: GitHub Pages, Netlify, Vercel, Cloudflare Pages</small>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

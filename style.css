@@ -91,7 +91,6 @@ form input, form textarea{
 .form-actions{display:flex;gap:8px;margin-top:6px}
 button{cursor:pointer;padding:8px 12px;border-radius:10px;border:none;background:rgba(255,255,255,0.03);color:inherit}
 button.primary{background:linear-gradient(90deg,var(--accent),#2bb7ad);box-shadow:0 6px 18px rgba(45,200,180,0.08);font-weight:600}
-button.secondary{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
 button.danger{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--danger)}
 
 .list-section{overflow:auto;max-height:220px;padding-right:6px}
@@ -106,37 +105,6 @@ button.danger{background:transparent;border:1px solid rgba(255,255,255,0.04);col
 
 .storage .storage-buttons{display:flex;gap:8px;align-items:center}
 .note{color:var(--muted);font-size:0.85rem;margin-top:6px}
-
-.preview-section{border-top:1px solid rgba(255,255,255,0.03);padding-top:10px}
-.preview-card{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px}
-.preview-card img{max-width:100%;border-radius:6px;margin-top:8px}
-
-/* Autocomplete dropdown */
-.search-results{
-  position:relative;
-  margin-top:6px;
-  max-height:260px;
-  overflow:auto;
-  border:1px solid rgba(255,255,255,0.04);
-  padding:6px;
-  border-radius:8px;
-  background: rgba(2,6,23,0.8);
-  z-index: 999;
-}
-.search-results[hidden]{ display:none; }
-.search-results .search-item{
-  padding:8px 10px;
-  border-radius:6px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.search-results .search-item:hover,
-.search-results .search-item.active{
-  background: linear-gradient(90deg,#2bb7ad22,#3dd2c6 40%);
-  color:#001;
-  font-weight:600;
-}
-.admin-only-note{ font-size:0.9rem; color:var(--muted); margin-bottom:8px; }
 
 .footer{padding:12px 18px;color:var(--muted);font-size:0.85rem;border-top:1px solid rgba(255,255,255,0.02)}
 @media (max-width:1000px){
