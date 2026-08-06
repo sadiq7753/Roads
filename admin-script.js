@@ -24,6 +24,7 @@ const imageInput = document.getElementById('image');
 const exportBtn = document.getElementById('export-json');
 const importFile = document.getElementById('import-file');
 const clearAllBtn = document.getElementById('clear-all');
+const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 
 function showToast(message, type = 'info', timeout = 3000){
   let toast = document.getElementById('rt-toast');
@@ -49,6 +50,18 @@ function showToast(message, type = 'info', timeout = 3000){
   }
 }
 
+function setSubmitDisabled(disabled){
+  if(!submitBtn) return;
+  submitBtn.disabled = disabled;
+  submitBtn.style.opacity = disabled ? '0.6' : '1';
+  submitBtn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+}
+
+function updateSubmitState(){
+  const ok = latInput && latInput.value && lngInput && lngInput.value;
+  setSubmitDisabled(!ok);
+}
+
 async function loadFromStorage(){
   const raw = localStorage.getItem(STORAGE_KEY);
   if(raw){
@@ -61,6 +74,7 @@ async function loadFromStorage(){
     } catch(e){ /* ignore */ }
   }
   renderStopsOnMap();
+  updateSubmitState();
 }
 
 function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(stops,null,2)); }catch(e){ console.error('Save failed', e); showToast('Saving failed', 'error'); } }
@@ -126,6 +140,7 @@ function selectResult(it){
   lngInput.value = parseFloat(it.lon).toFixed(6);
   searchResultsEl.hidden = true;
   activeIndex = -1;
+  updateSubmitState();
 }
 
 const debSearch = debounce(async (q) => {
@@ -135,7 +150,7 @@ const debSearch = debounce(async (q) => {
 
 placeInput.addEventListener('input', (e)=> {
   const v = e.target.value.trim();
-  if(!v){ searchResultsEl.hidden = true; return; }
+  if(!v){ searchResultsEl.hidden = true; updateSubmitState(); return; }
   debSearch(v);
 });
 
@@ -145,7 +160,14 @@ placeInput.addEventListener('keydown', (e)=>{
   if(items.length === 0) return;
   if(e.key === 'ArrowDown'){ e.preventDefault(); activeIndex = Math.min(items.length-1, activeIndex+1); updateActive(items); }
   else if(e.key === 'ArrowUp'){ e.preventDefault(); activeIndex = Math.max(0, activeIndex-1); updateActive(items); }
-  else if(e.key === 'Enter'){ e.preventDefault(); if(activeIndex >= 0) items[activeIndex].click(); }
+  else if(e.key === 'Enter'){
+    e.preventDefault();
+    if(activeIndex >= 0) items[activeIndex].click();
+    else {
+      // if Enter pressed without selecting, try to pick first suggestion
+      const first = items[0]; if(first) first.click();
+    }
+  }
 });
 
 function updateActive(items){
@@ -166,6 +188,7 @@ map.on('click', async (e)=>{
     const r = await fetch(url);
     if(r.ok){ const j = await r.json(); placeInput.value = j.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`; nameInput.value = j.name || (j.display_name||'').split(',')[0]; }
   } catch(e){ placeInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`; }
+  updateSubmitState();
 });
 
 // submit
@@ -173,7 +196,7 @@ form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   try{
     const lat = parseFloat(latInput.value), lng = parseFloat(lngInput.value);
-    if(Number.isNaN(lat) || Number.isNaN(lng)){ showToast('Please select a place from suggestions or click the map.', 'error'); return; }
+    if(Number.isNaN(lat) || Number.isNaN(lng)){ showToast('Please select a place from suggestions or click the map.', 'error'); updateSubmitState(); return; }
     const obj = {
       name: nameInput.value.trim() || (placeInput.value || 'Stop'),
       lat, lng,
@@ -186,6 +209,8 @@ form.addEventListener('submit', async (e)=>{
     saveToStorage();
     renderStopsOnMap();
     showToast('Stop added', 'success');
+    // update a last-update key so other pages can detect changes
+    try{ localStorage.setItem('roadtrip_last_update', String(Date.now())); }catch(e){}
 
     // OPTIONAL: send to serverless function to commit to GitHub (secure method)
     // Uncomment and set your endpoint if you deploy a serverless function:
@@ -203,6 +228,7 @@ form.addEventListener('submit', async (e)=>{
 
     form.reset();
     searchResultsEl.hidden = true;
+    updateSubmitState();
   }catch(err){ console.error(err); showToast('Failed to add stop', 'error'); }
 });
 
@@ -229,6 +255,7 @@ importFile.addEventListener('change', (ev)=>{
 clearAllBtn.addEventListener('click', ()=>{
   if(!confirm('Clear all stops?')) return;
   stops = []; saveToStorage(); renderStopsOnMap(); showToast('Cleared all stops', 'success');
+  updateSubmitState();
 });
 
 // init
