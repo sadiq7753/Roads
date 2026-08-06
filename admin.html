@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — The Long Way Round</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="title-block">
+      <h1>The Long Way Round</h1>
+      <span class="subtitle">a road trip, logged</span>
+      <span class="admin-tag">ADMIN</span>
+    </div>
+    <div class="stat-row">
+      <div>STOPS <b id="statStops">–</b></div>
+      <div>MILES DRIVEN <b id="statMiles">–</b></div>
+      <div>DAYS <b id="statDays">–</b></div>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <div class="sidebar">
+      <h2>Route Log</h2>
+      <div id="stopList"></div>
+
+      <div class="admin-bar">
+        <span id="fileStatus" class="file-status mono">not connected</span>
+        <button class="btn secondary small" type="button" id="connectFileBtn">Connect stops-data.json</button>
+      </div>
+
+      <details class="add-panel" id="addPanel" open>
+        <summary id="panelTitle">Add a stop</summary>
+
+        <div class="field">
+          <label>Place name / search</label>
+          <input type="text" id="searchPlace" placeholder="e.g. Moab, UT" />
+          <button class="btn secondary" type="button" id="geocodeBtn">Look up coordinates</button>
+          <div class="geocode-results" id="geocodeResults"></div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Latitude</label>
+            <input type="text" id="fLat" placeholder="38.5733" />
+          </div>
+          <div class="field">
+            <label>Longitude</label>
+            <input type="text" id="fLng" placeholder="-109.5498" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Display name</label>
+          <input type="text" id="fName" placeholder="Moab, UT" />
+        </div>
+
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="fDate" />
+        </div>
+
+        <div class="field">
+          <label>Notes</label>
+          <textarea id="fNotes" placeholder="What happened here..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Photo links</label>
+          <input type="text" id="fPhotos" placeholder="https://i.imgur.com/xyz.jpg, https://cdn.example.com/pic.jpg" />
+          <div class="hint">
+            Paste image URLs from any CDN or image host (Imgur, Cloudinary, your own bucket,
+            etc.), comma separated. You can also list a bare filename, e.g.
+            <span class="mono">sunrise.jpg</span>, if you'd rather drop the file into
+            <span class="mono">images/&lt;stop-id&gt;/</span> yourself.
+          </div>
+        </div>
+
+        <button class="btn rust" type="button" id="previewBtn">Preview on map</button>
+        <button class="btn" type="button" id="saveBtn">Save to stops-data.json</button>
+        <button class="btn secondary" type="button" id="cancelEditBtn" style="display:none;">Cancel edit</button>
+
+        <div class="hint">
+          "Preview" shows the pin on the map for this session only. "Save" writes the change
+          permanently into <span class="mono">stops-data.json</span> — connect the file above once
+          (Chrome/Edge), then every Save/Delete writes straight to it. Don't forget to
+          <span class="mono">git push</span> afterwards so the change actually publishes.
+        </div>
+      </details>
+    </div>
+
+    <div id="map"></div>
+  </div>
+</div>
+
+<div class="save-status mono" id="saveStatus"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>window.APP_CONFIG = { adminMode: true };</script>
+<script src="map-app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
